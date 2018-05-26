@@ -24,7 +24,7 @@ def create_app(config):
     app = Flask(__name__)
     app.config.from_object(configs.get(config))
 
-    reg_bps(app)
+    reg_exts(app)
     reg_bps(app)
 
     return app
