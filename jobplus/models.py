@@ -93,10 +93,3 @@ class Application(Base):
     status = db.Column(db.SmallInteger, default=WAITING)
     response = db.Column(db.String(256))
 
-
-
-
-
-
-
-
