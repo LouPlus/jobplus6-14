@@ -1,4 +1,5 @@
 from datetime import datetime
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -14,7 +15,8 @@ class Base(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
-class User(Base):
+
+class User(Base, UserMixin):
 
     __tablename__ = 'user'
 
@@ -31,6 +33,8 @@ class User(Base):
     resume_url = db.Column(db.String(64))
 
     company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='SET NULL'))
+    company = db.relationship('Company', backref=db.backref('users', lazy='dynamic'))
+
 
     @property
     def password(self):
@@ -59,8 +63,6 @@ class Company(Base):
     field = db.Column(db.String(128))
     finance = db.Column(db.String(128))
 
-    users = db.relationship('User', backref=db.backref('company', lazy='dynamic'))
-    jobs = db.relationship('Job', backref=db.backref('company', lazy='dynamic'))
 
 
 class Job(Base):
@@ -76,7 +78,10 @@ class Job(Base):
     degree = db.Column(db.String(32))
     is_fulltime = db.Column(db.Boolean, default=True)
     is_open = db.Column(db.Boolean, default=True)
+
     company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
+    company = db.relationship('Company', backref=db.backref('jobs', lazy='dynamic'))
+
 
 
 class Application(Base):
@@ -92,4 +97,3 @@ class Application(Base):
     company_id = db.Column(db.Integer)
     status = db.Column(db.SmallInteger, default=WAITING)
     response = db.Column(db.String(256))
-

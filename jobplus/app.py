@@ -1,7 +1,8 @@
 from flask import Flask
+from flask_login import LoginManager
 from flask_migrate import Migrate
 from .config import configs
-from .models import db
+from .models import db, User
 
 
 def reg_bps(app):
@@ -17,6 +18,15 @@ def reg_exts(app):
 
     db.init_app(app)
     Migrate(app, db)
+
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def user_loader(id):
+        return User.query.get(id)
+
+    login_manager.login_view = 'front.login'
 
 
 def create_app(config):
