@@ -15,6 +15,7 @@ class Base(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+
 class User(Base, UserMixin):
 
     __tablename__ = 'user'
@@ -33,6 +34,7 @@ class User(Base, UserMixin):
 
     company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='SET NULL'))
     company = db.relationship('Company', backref=db.backref('users', lazy='dynamic'))
+
 
     @property
     def password(self):
@@ -62,6 +64,7 @@ class Company(Base):
     finance = db.Column(db.String(128))
 
 
+
 class Job(Base):
 
     __tablename__ = 'job'
@@ -78,6 +81,7 @@ class Job(Base):
 
     company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
     company = db.relationship('Company', backref=db.backref('jobs', lazy='dynamic'))
+
 
 
 class Application(Base):
