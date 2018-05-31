@@ -34,6 +34,7 @@ class User(Base, UserMixin):
     company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='SET NULL'))
     company = db.relationship('Company', backref=db.backref('users', lazy='dynamic'))
 
+
     @property
     def password(self):
         return self._password
