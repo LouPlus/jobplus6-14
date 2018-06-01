@@ -15,7 +15,6 @@ class Base(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
-
 class User(Base, UserMixin):
 
     __tablename__ = 'user'
@@ -47,22 +46,29 @@ class User(Base, UserMixin):
     def check_password(self, pwd):
         return check_password_hash(self._password, pwd)
 
+    @property
+    def is_admin(self):
+        return self.role == self.ROLE_ADMIN
+
+    @property
+    def is_company(self):
+        return self.role >= self.ROLE_COMPANY and self.company_id is not None
+
 
 class Company(Base):
 
     __tablename__ = 'company'
 
     name =db.Column(db.String(128), unique=True, index=True, nullable=False)
-    logo = db.Column(db.String(256), nullable=False)
-    site = db.Column(db.String(128), nullable=False)
-    location = db.Column(db.String(24), nullable=False)
+    logo = db.Column(db.String(256))
+    site = db.Column(db.String(128))
+    location = db.Column(db.String(24))
     description = db.Column(db.String(100))
     about = db.Column(db.String(1000))
     tags = db.Column(db.String(128))
     stack = db.Column(db.String(128))
     field = db.Column(db.String(128))
     finance = db.Column(db.String(128))
-
 
 
 class Job(Base):
@@ -81,7 +87,6 @@ class Job(Base):
 
     company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
     company = db.relationship('Company', backref=db.backref('jobs', lazy='dynamic'))
-
 
 
 class Application(Base):
