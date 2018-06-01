@@ -1,23 +1,20 @@
-{% macro render_form(form, url) %}
-<form method="POST" action="{{ url }}">
-  <!-- 将 csrf_token 渲染在表单开始的位置 -->
+{% macro render_form(form, url, upload=False) %}
+<form method="POST"  {{ 'enctype=multipart/form-data' if upload }}  action="{{ url }}">
   {{ form.csrf_token }}
-  <!-- 迭代每个表单 field -->
   {% for field in form %}
-    <!-- 如果是 csrf_token 就不再渲染了 -->
     {% if field.type == 'CSRFTokenField' %}
     {{ '' }}
-    <!-- SubmitField 单独特殊处理 -->
     {% elif field.type == 'SubmitField' %}
     {{ form.submit(class='btn btn-primary', type='submit') }}
-    <!-- BooleanField 单独特殊处理 -->
     {% elif field.type == 'BooleanField' %}
     <div class="checkbox">
       <label>{{ field() }} {{ field.label.text }}</label>
     </div>
     {% else %}
     <div class="form-group {% if field.errors %}has-error{% endif %}">
-      {{ field.label }} {{ field(class='form-control') }}
+      {{ field.label }}
+      <span>{{ field.description }}</span>
+      {{ field(class='form-control') }}
     {% if field.errors %}
         {% for error in field.errors %}
         <span class="help-block">{{ error }}</span>
